@@ -4,8 +4,7 @@
 
 BAKKESMOD_PLUGIN(BoostRandomizerPlugin, "Boost Randomizer Plugin", "1.0", PERMISSION_ALL)
 
-void BoostRandomizerPlugin::onLoad()
-{
+void BoostRandomizerPlugin::onLoad() {
 	this->cvarManager->registerCvar(
 		"boost_randomizer_time_to_randomize",
 		"10",
@@ -46,12 +45,10 @@ void BoostRandomizerPlugin::randomize() {
 	}, this->getRandTimeout());
 }
 
-float BoostRandomizerPlugin::getRandTimeout()
-{
+float BoostRandomizerPlugin::getRandTimeout() {
 	ServerWrapper training = gameWrapper->GetGameEventAsServer();
 	float lastRand = training.GetSecondsElapsed() - lastRandTime;
-	if (lastRand > lastCooldownTime)
-	{
+	if (lastRand > lastCooldownTime) {
 		randomizeBoost();
 		return lastCooldownTime;
 	}
@@ -65,20 +62,18 @@ void BoostRandomizerPlugin::randomizeBoost() {
 	for (int i = 0; i < size; i++) {
 		auto car = cars.Get(i);
 		BoostWrapper boost = car.GetBoostComponent();
-		float newBoost = rand() % 100 + 0;
-		this->log(std::to_string(newBoost / 100));
-		boost.SetBoostAmount(newBoost/100);
+		float newBoost = cvarManager->getCvar("boost_randomizer_range_values").getFloatValue() / 100;
+		this->log(std::to_string(newBoost));
+		boost.SetBoostAmount(newBoost);
 	}
 	lastRandTime = server.GetSecondsElapsed();
 	lastCooldownTime = cvarManager->getCvar("boost_randomizer_time_to_randomize").getFloatValue();
 }
 
-void BoostRandomizerPlugin::onUnload()
-{
+void BoostRandomizerPlugin::onUnload() {
 
 }
 
-void BoostRandomizerPlugin::log(std::string msg)
-{
+void BoostRandomizerPlugin::log(std::string msg) {
 	cvarManager->log(msg);
 }
